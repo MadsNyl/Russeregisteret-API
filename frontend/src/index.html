@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russeregisteret</title>
+    <script src="/main.js" defer type="module"></script>
+    <link href="/output.css" rel="stylesheet">
+</head>
+<body class="font-sans">
+    <div class="h-screen">
+        <header class="flex justify-between items-center p-6">
+            <a href="/" class="text-red-700 text-4xl ml-16 font-bold cursor-pointer">
+                Russe<span class="text-black">registeret</span>
+            </a>
+            <nav class="mr-16">
+                <ul class="flex items-center text-md space-x-8">
+                    <li>
+                        <a
+                            class="transition duration-150 hover:text-red-700 font-semibold uppercase" 
+                            href="#search-section"
+                        >
+                            søk
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            class="transition duration-150 hover:text-red-700 font-semibold uppercase" 
+                            href="#aboutSection"
+                        >
+                            om
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            class="transition duration-150 hover:text-red-700 font-semibold uppercase" 
+                            href="#registerSection"
+                        >
+                            registrer
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            class="transition duration-150 hover:text-red-700 font-semibold relative" 
+                            href="/cart"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+                            </svg>
+                            <p id="shoppingCartNumber" class="absolute top-4 -right-2 w-5 h-5 rounded-full bg-black text-white text-sm flex justify-center items-center">
+                                
+                            </p>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+
+        <div class="h-4/5 flex justify-around items-center" >
+            <div class=" max-w-sm w-full">
+                <h1 class="text-red-700 pb-5 text-3xl font-semibold">
+                    Reserver russenavnet
+                </h1>
+                <p class="text-lg">
+                    For aller første gang eksisterer det nå et russenavnsregister. Sikre at navnet til din gruppe ikke er i bruk, og la resten av ditt russekull vite at navnet deres er reservert.
+                </p>
+                <div class=" w-full flex justify-center pt-8">
+                    <a href="#registerSection" class=" px-8 py-3 rounded-md shadow-lg bg-emerald-700 text-lg border-2 border-emerald-700 font-semibold text-white transition ease-in-out duration-300 hover:bg-white hover:text-emerald-700 hover:border-emerald-700">
+                        Registrer navn
+                    </a>
+                </div>
+            </div>
+            <img src="/register.svg" 
+                alt=""
+                class="w-56"
+            >
+        </div>
+    </div>
+
+    <div class=" min-h-screen bg-gray-50 shadow-inner rounded-2xl pb-80" id="search-section">
+        <div class=" pt-32 px-24 flex space-x-8 items-center">
+            <h1 class="pb-12 text-5xl font-semibold text-gray-800">
+                Vårt register venter på deg
+            </h1>
+            <img src="/search.png" alt="" class="w-16">
+        </div>
+
+        <div class="flex justify-center pt-20 pb-12">
+            <div class="flex bg-white px-5 py-3 max-w-md w-full shadow-md rounded-md border-2 border-gray-50">
+                <input 
+                    id="search"
+                    type="text"
+                    placeholder="Søk..."
+                    class="w-full focus:outline-none text-lg font-semibold"
+                >
+                <a id="searchButton" class=" cursor-pointer border-l-2 border-gray-800 pl-2 transition ease-in-out duration-300 hover:text-red-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                      </svg>                      
+                </a>
+            </div>
+        </div>
+
+        <div class="flex justify-center pb-20">
+            <div class="max-w-md w-full">
+                <div id="nextPage" class="hidden justify-between px-12 pb-6">
+                    <p class="font-semibold" id="pageInfo">
+
+                    </p>
+                    <a class="flex space-x-4 cursor-pointer transition duration-300 ease-in-out hover:text-red-700">
+                        <p>
+                            Neste side
+                        </p>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8.688c0-.864.933-1.405 1.683-.977l7.108 4.062a1.125 1.125 0 010 1.953l-7.108 4.062A1.125 1.125 0 013 16.81V8.688zM12.75 8.688c0-.864.933-1.405 1.683-.977l7.108 4.062a1.125 1.125 0 010 1.953l-7.108 4.062a1.125 1.125 0 01-1.683-.977V8.688z" />
+                        </svg>
+                    </a>  
+                </div>
+                <p id="searchErrorMessage" class="font-semibold text-red-700 hidden text-center">
+                    
+                </p>
+                <ul id="outputList"
+                    class="px-8 py-4 rounded-md shadow-md border-2 border-gray-100 bg-white max-w-md w-full hidden space-y-2 animate-fadein divide-y"    
+                >
+
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="aboutSection" class="min-h-screen py-20 px-32">
+        <div class="flex justify-between items-center">
+            <div class="max-w-lg w-lg">
+                <h1 class="font-semibold text-5xl pb-12">
+                    Hvorfor?
+                </h1>
+                <p class=" leading-7 text-lg pb-4">
+                    Vi vet hvor viktig det er for russen å ha sitt eget unike navn. Slik det er idag, er det vanskelig å ha kontroll over hvilke navn som har vært i bruk og som er i bruk nå. Vår løsning fører til en oversikt over dette.
+                </p>
+                <p class="leading-7 text-lg">
+                    Samtidig får dere muligheten til å reservere navn dere kunne tenke dere å bruke, eller som dere allerede har bestemt dere for å bruke. På denne måten vil andre russ være klar over at deres navn allerede er reservert for dette årets russekull. Slik unngår dere dobbelbooking av navn.
+                </p>
+            </div>
+
+            <div>
+                <h1 class="text-8xl font-bold text-emerald-600">
+                    59 <span class="text-5xl">nok</span>
+                </h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="min-h-screen bg-gray-50" id="registerSection">
+        <div class="flex justify-center pb-20 pt-32">
+            <div class="">
+                <h1 class="text-4xl font-semibold text-left pb-12">
+                    Registrer navn
+                </h1>
+                <div class="px-12 py-10 mb-8 rounded-lg shadow-md border-2 border-gray-50 bg-white">
+                    <div class="flex space-x-6 pb-8">
+                        <input type="text"
+                            id="registeredName"
+                            placeholder="Russenavn"
+                            class="focus:outline-none px-4 py-2 bg-gray-50 border-2 border-gray-100 rounded-md placeholder:text-gray-400 font-semibold"
+                        >
+                        <input type="text"
+                            id="registeredYear"
+                            placeholder="Russekull"
+                            class="focus:outline-none px-4 py-2 bg-gray-50 border-2 border-gray-100 rounded-md placeholder:text-gray-400 font-semibold"
+                        >
+                    </div>
+
+                    <div class="pb-3">
+                        <p id="nameErrorMessage" class="hidden font-semibold text-red-700 text-center pb-2">
+
+                        </p>
+                        <p id="yearErrorMessage" class="hidden font-semibold text-red-700 text-center">
+
+                        </p>
+                    </div>
+
+                    <div class="flex justify-center w-full">
+                        <a 
+                            id="addNameButton"
+                            class="w-full text-center py-3 rounded-md bg-black text-white text-lg font-semibold cursor-pointer transition ease-in-out duration-300 hover:bg-gray-100 hover:text-gray-800">
+                            Sjekk opp mot register
+                        </a>
+                    </div>
+                </div>
+
+                <div class="flex justify-center max-w-full w-full">
+                    <div id="registerOutputWrapper" class="hidden max-w-full w-full px-12 py-4 rounded-lg shadow-md border-2 border-gray-50 bg-white space-y-2 animate-popup">
+                        <p id="registerMessage" class="max-w-md w-full text-center text-lg font-semibold hidden">
+                            
+                        </p>
+                        <ul id="registerOutputList"
+                            class="divide-y pb-6"    
+                        >
+
+                        </ul>
+                        <div class="flex justify-center w-full">
+                            <a 
+                                id="addNameToCartButton"
+                                class="w-full text-center py-3 rounded-md bg-black text-white text-lg font-semibold cursor-pointer transition ease-in-out duration-300 hover:bg-gray-100 hover:text-gray-800">
+                                Legg til navn
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-center max-w-full w-full relative">
+                    <div id="nameRegisteredWrapper" class="hidden max-w-full w-full px-12 py-4 rounded-lg shadow-md bg-emerald-500 animate-popup">
+                        <div id="nameRegisteredMessage" class="max-w-md w-full text-center text-md font-semibold text-white ">
+                            <p>
+                                Navn er registrert og lagt til i din handlekurv. <a class="underline" href="/cart.html">Gå til handlekurv.</a>
+                            </p>
+                            <svg id="closeSuccessMessage" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 absolute top-1 right-1 cursor-pointer">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>  
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="py-12 bg-black text-white flex justify-between items-center">
+        <div class="ml-20">
+            <h1 class="text-xl">
+                Kontakt
+            </h1>
+            <p>
+                E-post: <span class=" font-thin">russeregisteret@gmail.com</span>
+            </p>
+        </div>
+        <div>
+            <p class="font-thin">
+                &#169; Russeregisteret 2022
+            </p>
+        </div>
+        <div class="mr-20">
+            <a href="/cart" class="underline">
+                Gå til handlekurv
+            </a>
+        </div>
+    </footer>
+    
+</body>
+</html>
