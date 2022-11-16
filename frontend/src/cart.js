@@ -23,14 +23,14 @@ function setCartOverview() {
     if (cart.length > 0) {
         for (const reg of cart) {
             let li = document.createElement("li");
-            li.classList.add("flex", "justify-between", "items-center", "font-semibold", "text-xl", "pt-2");
+            li.classList.add("flex", "justify-between", "items-center", "font-semibold", "text-md", "md:text-xl", "pt-2");
             let regName = document.createElement("p");
             regName.innerText = `${reg.name} ${reg.year}`;
             li.appendChild(regName);
             let div = document.createElement("div");
             div.classList.add("flex", "items-center");
             let p = document.createElement("p");
-            p.innerHTML = "59 <span class='text-sm'>NOK</span>";
+            p.innerHTML = "59 <span class='text-xs md:text-sm'>NOK</span>";
             let a = document.createElement("a");
             a.innerHTML = `
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ml-3 w-5 h-5 cursor-pointer text-gray-400 transition duration-300 ease-in-out hover:text-red-700">

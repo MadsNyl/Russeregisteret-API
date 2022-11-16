@@ -25,16 +25,15 @@ function toggleClasses(id, add, remove) {
 }
 
 async function search() {
-    toggleClasses("search-section", "pb-80", "pb-20");
-    let nextButton = document.getElementById("nextPage");
-    nextButton.classList.add("hidden");
-    nextButton.classList.remove("flex");
+    // toggleClasses("search-section", "pb-80", "pb-32");
+    toggleClasses("search-section", "pb-32", "pb-80");
+    // let nextButton = document.getElementById("nextPage");
+    // nextButton.classList.add("hidden");
+    // nextButton.classList.remove("flex");
     let search = document.getElementById("search").value;
     let outputList = document.getElementById("outputList");
     if (searchKey != search) page = 1;
     searchKey = search;
-    outputList.innerHTML = "";
-    outputList.classList.add("hidden");
 
 
     if (search.length < 2) {
@@ -70,8 +69,18 @@ async function search() {
     }
 
     outputList.classList.remove("hidden");
-    toggleClasses("search-section", "pb-20", "pb-80");
     
+    if (page > 1) {
+        for (let i = 0; i < outputList.children.length; i++) {
+            outputList.children[i].children[0].innerText = body[i].name;
+            outputList.children[i].children[1].innerText = body[i].year;
+        }
+        return;
+    }
+    
+    // outputList.classList.add("hidden");
+    outputList.innerHTML = "";
+    toggleClasses("nextPage", "hidden", "remove")
     for (const result of body) {
         let li = document.createElement("li");
         let name = document.createElement("p");
