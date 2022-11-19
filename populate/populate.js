@@ -24,24 +24,40 @@ temp.forEach((res) => {
 });
 
 values.forEach((reg) => { delete reg.Sammen });
-values.filter(reg => !(reg && Object.keys(reg).length === 0));
+values = values.filter(reg => !(reg && Object.keys(reg).length === 0));
 
-let i = 0;
-for (let val of values) {
-    if(Object.keys(val).length === 0) values.splice(i, i);
-    i++;
-}
+let finalValues = [];
+
+for (let val of values) finalValues.push([val["Navn"], val["År"]]);
 
 
-const populate = (name, year) => {
-    pool.query(`INSERT INTO register (name, year) VALUES ("${name}", "${year}")`, (error, results) => {
+const populate = (values) => {
+    console.log(values)
+    pool.query("INSERT INTO register (name, year) VALUES ?", [values], (error, results) => {
+        console.log(results)
         if (error) console.log(error);
         else console.log("Rows inserted");
     });
 }
 
-
-for (const val of values) {
-    populate(val.Navn, val.År);
+const deleteAll = () => {
+    pool.query("TRUNCATE register", (error, results) => {
+        if (error) console.log(error);
+        else console.log("All records deleted.")
+    });
 }
-console.log("finito")
+
+
+for (let i = 0; i < finalValues.length; i++) {
+    pool.query("SELECT * FROM register WHERE name = ? AND year = ?", [finalValues[i][0], finalValues[i][1]], (error, results) => {
+        if (error) console.log(error);
+        else if (results.length > 0) {
+            console.log(`${finalValues[i][0]} ${finalValues[i][1]} is already registered.`);
+            finalValues.splice(i, 1);
+        }
+    });
+}
+
+// populate(finalValues);
+
+console.log("finito");

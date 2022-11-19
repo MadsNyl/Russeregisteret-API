@@ -17,7 +17,7 @@ let storedRegisteredName;
 let storedRegisteredYear;
 let page = 1;
 let searchKey;
-let currentSearchKey;
+// let currentSearchKey;
 
 function toggleClasses(id, add, remove) {
     document.getElementById(id).classList.add(add);
@@ -25,18 +25,17 @@ function toggleClasses(id, add, remove) {
 }
 
 async function search() {
-    // toggleClasses("search-section", "pb-80", "pb-32");
-    toggleClasses("search-section", "pb-32", "pb-80");
-    // let nextButton = document.getElementById("nextPage");
-    // nextButton.classList.add("hidden");
-    // nextButton.classList.remove("flex");
     let search = document.getElementById("search").value;
     let outputList = document.getElementById("outputList");
-    if (searchKey != search) page = 1;
+    outputList.classList.remove("hidden");
+    page = 1;
+    toggleClasses("nextPage", "hidden", "flex");
     searchKey = search;
 
 
     if (search.length < 2) {
+        outputList.classList.add("hidden");
+        outputList.innerHTML = "";
         document.getElementById("searchErrorMessage").classList.remove("hidden");
         document.getElementById("searchErrorMessage").innerText = "Søkeordet må være på 2 eller flere bokstaver."
         return;
@@ -45,7 +44,7 @@ async function search() {
     document.getElementById("searchErrorMessage").classList.add("hidden");
     document.getElementById("searchErrorMessage").innerHTML = "";
     
-    const response = await fetch(`http://localhost:3000/search?search=${search}&page=${page}&limit=10`, {
+    const response = await fetch(`http://localhost:3000/search?search=${search}&page=1&limit=10`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json"
@@ -53,34 +52,25 @@ async function search() {
     });
 
     if (!response.ok) {
+        outputList.classList.add("hidden");
+        outputList.innerHTML = "";
         document.getElementById("searchErrorMessage").classList.remove("hidden");
         document.getElementById("searchErrorMessage").innerText = "Fant ingen registrering av dette navnet. Prøv å søke etter noe annet.";
         return;
     }
 
     const body = await response.json();
+
     if (body.length == 11) {
         body.pop();
-        let nextButton = document.getElementById("nextPage");
-        nextButton.classList.remove("hidden");
-        nextButton.classList.add("flex");
+        toggleClasses("nextPage", "flex", "hidden");
         document.getElementById("pageInfo").innerText = `Side ${page}`;
         page++;
     }
 
     outputList.classList.remove("hidden");
-    
-    if (page > 1) {
-        for (let i = 0; i < outputList.children.length; i++) {
-            outputList.children[i].children[0].innerText = body[i].name;
-            outputList.children[i].children[1].innerText = body[i].year;
-        }
-        return;
-    }
-    
-    // outputList.classList.add("hidden");
     outputList.innerHTML = "";
-    toggleClasses("nextPage", "hidden", "remove")
+
     for (const result of body) {
         let li = document.createElement("li");
         let name = document.createElement("p");
@@ -93,6 +83,41 @@ async function search() {
         outputList.appendChild(li);
     }
     
+}
+
+async function nextPage() {
+    document.getElementById("pageInfo").innerText = `Side ${page}`;
+    document.getElementById("outputList").innerHTML = "";
+
+    const response = await fetch(`http://localhost:3000/search?search=${searchKey}&page=${page}&limit=10`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+
+    const body = await response.json();
+
+    if (body.length == 11) {
+        body.pop();
+        toggleClasses("nextPage", "flex", "hidden");
+        document.getElementById("pageInfo").innerText = `Side ${page}`;
+        page++;
+    } else {
+        toggleClasses("nextPage", "hidden", "flex");
+    }
+
+    for (const result of body) {
+        let li = document.createElement("li");
+        let name = document.createElement("p");
+        name.innerText = result.name;
+        let year = document.createElement("p");
+        year.innerText = result.year;
+        li.appendChild(name);
+        li.appendChild(year);
+        li.classList.add("flex", "font-semibold", "justify-between", "items-center", "py-3");
+        outputList.appendChild(li);
+    }
 }
 
 async function checkRegister() {
@@ -214,5 +239,5 @@ document.getElementById("searchButton").onclick = search;
 document.getElementById("addNameButton").onclick = checkRegister;
 document.getElementById("addNameToCartButton").onclick = addToCart;
 document.getElementById("closeSuccessMessage").onclick = closeSuccessMessage;
-document.getElementById("nextPage").onclick = search;
+document.getElementById("nextPage").onclick = nextPage;
 document.getElementById("search").onkeydown = (e) => { if (e.key == "Enter") search(); };

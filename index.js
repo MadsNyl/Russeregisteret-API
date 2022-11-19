@@ -101,7 +101,18 @@ const fulfillOrder = async (session) => {
         );
     }
 
-    pool.query("INSERT INTO register (name, year) VALUES ?", [values], (error, results) => {
+    let finalValues = []
+
+    // check if a register already exists in db
+    for (let value of values) {
+        pool.query("SELECT * FROM register WHERE name = ? AND year = ?", [value[0], value[1]], (error, results) => {
+            if (error) console.log(error);
+            else if (results.length > 0) finalValues.push(value);
+            else console.log("Name already registered at given year.")
+        });
+    }
+
+    pool.query("INSERT INTO register (name, year) VALUES ?", [finalValues], (error, results) => {
         if (error) console.log(error);
         else console.log("Name added to DB.");
     });
