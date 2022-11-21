@@ -6,6 +6,7 @@ require("dotenv").config();
 const SK = process.env.STRIPE_SECRET_KEY;
 const ENDPOINT_SECRET = process.env.STRIPE_ENDPOINT_SECRET;
 const API_URL = process.env.URL;
+console.log(API_URL);
 
 const connection = require("./connection.js");
 const pool = connection.connection;
