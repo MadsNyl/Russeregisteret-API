@@ -6,7 +6,6 @@ require("dotenv").config();
 const SK = process.env.STRIPE_SECRET_KEY;
 const ENDPOINT_SECRET = process.env.STRIPE_ENDPOINT_SECRET;
 const API_URL = process.env.URL;
-const PORT = process.env.PORT;
 
 const connection = require("./connection.js");
 const pool = connection.connection;
@@ -80,8 +79,8 @@ app.post("/create-checkout-session", async (req, res) => {
             payment_method_types: ["card"],
             line_items: cart,
             mode: "payment",
-            success_url: `${API_URL}${PORT}`,
-            cancel_url: `${API_URL}${PORT}/cart`
+            success_url: `${API_URL}`,
+            cancel_url: `${API_URL}/cart`
         });
         res.json({ url: session.url });
     } catch (error) {
@@ -142,4 +141,4 @@ app.post('/webhook', express.raw({type: 'application/json'}), (request, response
     response.status(200).end();
 });
 
-app.listen(PORT);
+app.listen(3000);
