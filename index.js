@@ -6,7 +6,6 @@ require("dotenv").config();
 const SK = process.env.STRIPE_SECRET_KEY;
 const ENDPOINT_SECRET = process.env.STRIPE_ENDPOINT_SECRET;
 const API_URL = process.env.URL;
-console.log(API_URL);
 
 const connection = require("./connection.js");
 const pool = connection.connection;
@@ -24,7 +23,7 @@ app.use((req, res, next) => {
       express.json()(req, res, next);
     }
 });
-app.use(cors({ origin: "https://seal-app-snqwb.ondigitalocean.app/" }));
+app.use(cors({ origin: ["https://seal-app-snqwb.ondigitalocean.app/", "http://localhost:3000"] }));
 
 // static files
 app.use(express.static(__dirname + "/frontend/dist"));
@@ -47,6 +46,8 @@ app.get("/cart", (req, res) => {
 app.get("/search", (req, res) => {
     const page = parseInt(req.query.page);
     const limit = parseInt(req.query.limit);
+
+    if (req.query.search.length < 3) res.status(500).send("Søkeordet må være på 3 eller flere bokstaver."); 
     
     pool.query(`SELECT name, year FROM register WHERE name LIKE '%${req.query.search}%' LIMIT ${limit + 1} OFFSET ${(page - 1) * limit}`, (error, results, fields) => {
         if (results.length == 0) {
@@ -142,4 +143,5 @@ app.post('/webhook', express.raw({type: 'application/json'}), (request, response
     response.status(200).end();
 });
 
-app.listen(8080);
+// app.listen(8080);
+app.listen(3000);

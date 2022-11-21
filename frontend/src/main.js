@@ -17,33 +17,42 @@ let storedRegisteredName;
 let storedRegisteredYear;
 let page = 1;
 let searchKey;
-// let currentSearchKey;
 
 function toggleClasses(id, add, remove) {
     document.getElementById(id).classList.add(add);
     document.getElementById(id).classList.remove(remove);
 }
 
+function resetSearchErrorMessage() {
+    document.getElementById("outputList").innerHTML = "";
+    document.getElementById("outputList").classList.add("hidden");
+    document.getElementById("searchErrorMessage").classList.add("hidden");
+    document.getElementById("searchErrorMessage").innerText = "";
+}
+
+function setSearchErrorMessage(message) {
+    document.getElementById("outputList").innerHTML = "";
+    document.getElementById("outputList").classList.add("hidden");
+    document.getElementById("searchErrorMessage").classList.remove("hidden");
+    document.getElementById("searchErrorMessage").innerText = message;
+}
+
 async function search() {
+    toggleClasses("nextPage", "hidden", "flex");
+    resetSearchErrorMessage();
     let search = document.getElementById("search").value;
     let outputList = document.getElementById("outputList");
-    outputList.classList.remove("hidden");
     page = 1;
-    toggleClasses("nextPage", "hidden", "flex");
     searchKey = search;
 
-
     if (search.length < 3) {
-        outputList.classList.add("hidden");
-        outputList.innerHTML = "";
-        document.getElementById("searchErrorMessage").classList.remove("hidden");
-        document.getElementById("searchErrorMessage").innerText = "Søkeordet må være på 3 eller flere bokstaver."
+        setSearchErrorMessage("Søkeordet må være på 3 eller flere bokstaver.");
         return;
     }
 
-    document.getElementById("searchErrorMessage").classList.add("hidden");
-    document.getElementById("searchErrorMessage").innerHTML = "";
-    
+    toggleClasses("spinner", "flex", "hidden");
+    outputList.classList.remove("hidden");
+
     const response = await fetch(`https://seal-app-snqwb.ondigitalocean.app/search?search=${search}&page=1&limit=10`, {
         method: "GET",
         headers: {
@@ -52,26 +61,29 @@ async function search() {
     });
 
     if (!response.ok) {
-        outputList.classList.add("hidden");
-        outputList.innerHTML = "";
-        document.getElementById("searchErrorMessage").classList.remove("hidden");
-        document.getElementById("searchErrorMessage").innerText = "Fant ingen registrering av dette navnet. Prøv å søke etter noe annet.";
+        toggleClasses("spinner", "hidden", "flex");
+        resetSearchErrorMessage();
+        setSearchErrorMessage("Fant ingen registrering av dette navnet. Prøv å søke etter noe annet.");
         return;
     }
 
-    const body = await response.json();
+    await setBody(response, outputList);    
+}
 
-    if (body.length == 11) {
-        body.pop();
+async function setBody(res, outputList) {
+    const results = await res.json();
+    toggleClasses("spinner", "hidden", "flex");
+
+    if (results.length == 11) {
+        results.pop();
         toggleClasses("nextPage", "flex", "hidden");
         document.getElementById("pageInfo").innerText = `Side ${page}`;
         page++;
-    }
+    } else toggleClasses("nextPage", "hidden", "flex");
 
     outputList.classList.remove("hidden");
-    outputList.innerHTML = "";
 
-    for (const result of body) {
+    for (const result of results) {
         let li = document.createElement("li");
         let name = document.createElement("p");
         name.innerText = result.name;
@@ -82,12 +94,14 @@ async function search() {
         li.classList.add("flex", "font-semibold", "justify-between", "items-center", "py-3");
         outputList.appendChild(li);
     }
-    
 }
 
 async function nextPage() {
+    console.log(page)
     document.getElementById("pageInfo").innerText = `Side ${page}`;
-    document.getElementById("outputList").innerHTML = "";
+    let outputList = document.getElementById("outputList");
+    outputList.innerHTML = "";
+    toggleClasses("spinner", "flex", "hidden");
 
     const response = await fetch(`https://seal-app-snqwb.ondigitalocean.app/search?search=${searchKey}&page=${page}&limit=10`, {
         method: "GET",
@@ -96,28 +110,7 @@ async function nextPage() {
         }
     });
 
-    const body = await response.json();
-
-    if (body.length == 11) {
-        body.pop();
-        toggleClasses("nextPage", "flex", "hidden");
-        document.getElementById("pageInfo").innerText = `Side ${page}`;
-        page++;
-    } else {
-        toggleClasses("nextPage", "hidden", "flex");
-    }
-
-    for (const result of body) {
-        let li = document.createElement("li");
-        let name = document.createElement("p");
-        name.innerText = result.name;
-        let year = document.createElement("p");
-        year.innerText = result.year;
-        li.appendChild(name);
-        li.appendChild(year);
-        li.classList.add("flex", "font-semibold", "justify-between", "items-center", "py-3");
-        outputList.appendChild(li);
-    }
+    await setBody(response, outputList);
 }
 
 async function checkRegister() {
@@ -166,12 +159,11 @@ async function checkRegister() {
     
     if (isError) return;
 
-
     year.classList.remove("border-red-700");
     search.classList.remove("border-red-700");
+    toggleClasses("regSpinner", "flex", "hidden");
 
-
-    const response = await fetch(`https://seal-app-snqwb.ondigitalocean.app/search?search=${search.value}&page=${page}&limit=10`, {
+    const response = await fetch(`https://seal-app-snqwb.ondigitalocean.app/search?search=${search.value}&page=1&limit=10`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json"
@@ -183,31 +175,38 @@ async function checkRegister() {
     year.value = "";
     search.value = "";
     if (!response.ok) {
+        toggleClasses("regSpinner", "hidden", "flex");
         output.classList.remove("hidden");
         document.getElementById("registerMessage").classList.remove("hidden");
         toggleClasses("registerMessage", "text-emerald-600", "text-red-700")
         document.getElementById("registerMessage").innerText = `Fant ingen liknende navn til '${storedRegisteredName}' i registeret. Trykk på knappen under for å legge til navn i handlekurven.`
-    } else {
-        const body = await response.json();
-        output.classList.remove("hidden");
-        document.getElementById("registerMessage").classList.remove("hidden");
-        toggleClasses("registerMessage", "text-red-700", "text-emerald-600");
-        document.getElementById("registerMessage").innerText = `Fant følgende liknende navn til '${storedRegisteredName}' i registeret. Trykk på knappen under hvis du fortsatt vil legge til navnet i handlekurven.`;
-
-        for (const item of body) {
-            let li = document.createElement("li");
-            let name = document.createElement("p");
-            name.innerText = item.name;
-            let year = document.createElement("p");
-
-            year.innerText = item.year;
-            li.appendChild(name);
-            li.appendChild(year);
-            li.classList.add("flex", "font-semibold", "justify-between", "items-center", "py-3");
-            outputList.appendChild(li);
-        }
-    }
+    } else await setRegisterBody(response, outputList, output, storedRegisteredName);
 }
+
+async function setRegisterBody(response, outputList, output, storedRegisteredName) {
+    const results = await response.json();
+    toggleClasses("regSpinner", "hidden", "flex");
+
+    outputList.classList.remove("hidden");
+    output.classList.remove("hidden");
+    document.getElementById("registerMessage").classList.remove("hidden");
+    toggleClasses("registerMessage", "text-red-700", "text-emerald-600");
+    document.getElementById("registerMessage").innerText = `Fant følgende liknende navn til '${storedRegisteredName}' i registeret. Trykk på knappen under hvis du fortsatt vil legge til navnet i handlekurven.`;
+
+    for (const result of results) {
+        let li = document.createElement("li");
+        let name = document.createElement("p");
+        name.innerText = result.name;
+        let year = document.createElement("p");
+
+        year.innerText = result.year;
+        li.appendChild(name);
+        li.appendChild(year);
+        li.classList.add("flex", "font-semibold", "justify-between", "items-center", "py-3");
+        outputList.appendChild(li);
+    }
+
+} 
 
 function addToCart() {
     let output = document.getElementById("registerOutputWrapper");
