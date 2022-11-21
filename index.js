@@ -23,7 +23,7 @@ app.use((req, res, next) => {
       express.json()(req, res, next);
     }
 });
-app.use(cors({ origin: "*" }));
+app.use(cors({ origin: "https://seal-app-snqwb.ondigitalocean.app/" }));
 
 // static files
 app.use(express.static(__dirname + "/frontend/dist"));

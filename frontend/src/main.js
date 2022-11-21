@@ -44,7 +44,7 @@ async function search() {
     document.getElementById("searchErrorMessage").classList.add("hidden");
     document.getElementById("searchErrorMessage").innerHTML = "";
     
-    const response = await fetch(`http://localhost:3000/search?search=${search}&page=1&limit=10`, {
+    const response = await fetch(`https://seal-app-snqwb.ondigitalocean.app/search?search=${search}&page=1&limit=10`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json"
@@ -89,7 +89,7 @@ async function nextPage() {
     document.getElementById("pageInfo").innerText = `Side ${page}`;
     document.getElementById("outputList").innerHTML = "";
 
-    const response = await fetch(`http://localhost:3000/search?search=${searchKey}&page=${page}&limit=10`, {
+    const response = await fetch(`https://seal-app-snqwb.ondigitalocean.app/search?search=${searchKey}&page=${page}&limit=10`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json"
@@ -171,7 +171,7 @@ async function checkRegister() {
     search.classList.remove("border-red-700");
 
 
-    const response = await fetch(`http://localhost:3000/search?search=${search.value}&page=${page}&limit=10`, {
+    const response = await fetch(`https://seal-app-snqwb.ondigitalocean.app/search?search=${search.value}&page=${page}&limit=10`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json"
