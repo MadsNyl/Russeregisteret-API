@@ -79,8 +79,8 @@ app.post("/create-checkout-session", async (req, res) => {
             payment_method_types: ["card"],
             line_items: cart,
             mode: "payment",
-            success_url: `${API_URL}`,
-            cancel_url: `${API_URL}/cart`
+            success_url: `https://seal-app-snqwb.ondigitalocean.app/`,
+            cancel_url: `https://seal-app-snqwb.ondigitalocean.app/cart`
         });
         res.json({ url: session.url });
     } catch (error) {
