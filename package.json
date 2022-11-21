@@ -4,9 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./index.js",
-    "build": "npx tailwindcss -i ./frontend/src/input.css -o ./frontend/dist/output.css --watch",
-    "populate": "nodemon ./populate/populate.js"
+    "start": "node ./index.js",
+    "build": "npx tailwindcss -i ./frontend/src/input.css -o ./frontend/dist/output.css --watch"
   },
   "author": "",
   "license": "ISC",
