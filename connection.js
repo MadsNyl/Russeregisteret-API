@@ -1,4 +1,4 @@
-const mysql = require("mysql2");
+const mysql = require("mysql");
 require("dotenv").config();
 const DB_HOST = process.env.DB_HOST;
 const DB_USER = process.env.DB_USER;
