@@ -33,11 +33,11 @@ async function search() {
     searchKey = search;
 
 
-    if (search.length < 2) {
+    if (search.length < 3) {
         outputList.classList.add("hidden");
         outputList.innerHTML = "";
         document.getElementById("searchErrorMessage").classList.remove("hidden");
-        document.getElementById("searchErrorMessage").innerText = "Søkeordet må være på 2 eller flere bokstaver."
+        document.getElementById("searchErrorMessage").innerText = "Søkeordet må være på 3 eller flere bokstaver."
         return;
     }
 
@@ -136,11 +136,11 @@ async function checkRegister() {
     let search = document.getElementById("registeredName");
     let year = document.getElementById("registeredYear");
 
-    if (search.value.length < 2) {
+    if (search.value.length < 3) {
         search.value = "";
         search.classList.add("border-red-700");
         nameError.classList.remove("hidden");
-        nameError.innerText = "Navn må være minimum 2 bokstaver langt.";
+        nameError.innerText = "Navn må være minimum 3 bokstaver langt.";
         isError = true;
     }
 
