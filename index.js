@@ -30,21 +30,6 @@ app.use(express.static(__dirname + "/frontend/dist"));
 app.use(express.static(__dirname + "/frontend/src"));
 app.use(express.static(__dirname + "/frontend/img"));
 
-// // index file
-// app.get("/", (req, res) => {
-//     res.sendFile(path.join(__dirname, "/frontend/src/index"));
-// });
-
-// // cart file
-// app.get("/cart", (req, res) => {
-//     res.sendFile(path.join(__dirname, "/frontend/src/cart"));
-// });
-
-// success file
-// app.get("/success", (req, res) => {
-//     res.sendFile(path.join(__dirname, "/frontend/src/success.html"));
-// });
-
 // search for name
 app.get("/search", (req, res) => {
     const page = parseInt(req.query.page);
@@ -84,8 +69,8 @@ app.post("/create-checkout-session", async (req, res) => {
             payment_method_types: ["card"],
             line_items: cart,
             mode: "payment",
-            success_url: `https://seal-app-snqwb.ondigitalocean.app/success`,
-            cancel_url: `https://seal-app-snqwb.ondigitalocean.app/cart`
+            success_url: `https://seal-app-snqwb.ondigitalocean.app/success.html`,
+            cancel_url: `https://seal-app-snqwb.ondigitalocean.app/cart.html`
         });
         res.json({ url: session.url });
     } catch (error) {
