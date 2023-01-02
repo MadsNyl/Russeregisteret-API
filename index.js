@@ -2,16 +2,13 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 
-require("dotenv").config();
-const SK = process.env.STRIPE_SECRET_KEY;
-const ENDPOINT_SECRET = process.env.STRIPE_ENDPOINT_SECRET;
-const API_URL = process.env.URL;
+const { SK } = require("./settings/shared.js");
 
 const connection = require("./connection.js");
+const { webhook } = require("./webhook.js");
+const { contactEmail } = require("./settings/email.js");
 const pool = connection.connection;
 const stripe = require("stripe")(SK);
-
-
 
 const app = express();
 
@@ -23,27 +20,45 @@ app.use((req, res, next) => {
       express.json()(req, res, next);
     }
 });
-app.use(cors({ origin: "https://seal-app-snqwb.ondigitalocean.app/" }));
+app.use(cors());
 
-// static files
-app.use(express.static(__dirname + "/frontend/dist"));
-app.use(express.static(__dirname + "/frontend/src"));
-app.use(express.static(__dirname + "/frontend/img"));
+
+// send email from contact form
+app.post("/contact", contactEmail);
+
 
 // search for name
 app.get("/search", (req, res) => {
     const page = parseInt(req.query.page);
-    const limit = parseInt(req.query.limit);
 
-    if (req.query.search.length < 3) res.status(500).send("Søkeordet må være på 3 eller flere bokstaver."); 
-    
-    pool.query(`SELECT name, year FROM register WHERE name LIKE '%${req.query.search}%' LIMIT ${limit + 1} OFFSET ${(page - 1) * limit}`, (error, results, fields) => {
-        if (results.length == 0) {
-            res.status(404).send("Søk ikke funnet.");
-        }
+    pool.query(`SELECT COUNT(*) as total FROM register WHERE name LIKE '%${req.query.search}%'`, (error, result, fields) => {
+        if (error) console.log(error);
         else {
-            res.send(results);
-        } 
+            pool.query(`SELECT name, year FROM register WHERE name LIKE '%${req.query.search}%' ORDER BY name LIMIT 10 OFFSET ${(page - 1) * 10}`, (error, names, fields) => {
+                if (error) console.log(error);
+                else {
+                    result[0].page = page;
+                    result[0].names = names;
+                    res.send(result);
+                }
+            });
+        }
+    });
+});
+
+// check for name
+app.get("/check", (req, res) => {
+    pool.query(`SELECT COUNT(*) as total FROM register WHERE name LIKE '%${req.query.search}%'`, (error, result, fields) => {
+        if (error) console.log(error);
+        else {
+            pool.query(`SELECT name, year FROM register WHERE name LIKE '%${req.query.search}%' ORDER BY name LIMIT 1`, (error, name, fields) => {
+                if (error) console.log(error);
+                else {
+                    result[0].result = name;
+                    res.send(result);
+                }
+            });
+        }
     });
 });
 
@@ -69,8 +84,8 @@ app.post("/create-checkout-session", async (req, res) => {
             payment_method_types: ["card"],
             line_items: cart,
             mode: "payment",
-            success_url: `https://seal-app-snqwb.ondigitalocean.app/success.html`,
-            cancel_url: `https://seal-app-snqwb.ondigitalocean.app/cart.html`
+            success_url: `http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `http://localhost:3000/cart`
         });
         res.json({ url: session.url });
     } catch (error) {
@@ -78,57 +93,25 @@ app.post("/create-checkout-session", async (req, res) => {
     }
 });
 
-// webhook for checkout session
-const fulfillOrder = async (session) => {
-    
-    const object = await stripe.checkout.sessions.retrieve(session.id, {
-        expand: ["line_items"]
-    });
-    let values = [];
-    for (let i = 0; i < object.line_items.data.length; i++) {
-        let info = object.line_items.data[i].description.split(" ");
-        values.push(
-            [info[0], info[1]]
-        );
-    }
+// get session
+app.get("/session", async (req, res) => {
+    const id = req.query.session;
 
-    let finalValues = []
-
-    // check if a register already exists in db
-    for (let value of values) {
-        pool.query("SELECT * FROM register WHERE name = ? AND year = ?", [value[0], value[1]], (error, results) => {
-            if (error) console.log(error);
-            else if (results.length > 0) finalValues.push(value);
-            else console.log("Name already registered at given year.")
-        });
-    }
-
-    pool.query("INSERT INTO register (name, year) VALUES ?", [finalValues], (error, results) => {
-        if (error) console.log(error);
-        else console.log("Name added to DB.");
-    });
-}
-
-app.post('/webhook', express.raw({type: 'application/json'}), (request, response) => {
-    const payload = request.body;
-    const sig = request.headers["stripe-signature"];
-
-    let event;
+    if (id.length === 0 || !id) {
+        console.log("Session ID not valid.");
+        res.status(404).send("Session ID not valid.");
+    } 
 
     try {
-        event = stripe.webhooks.constructEvent(payload, sig, ENDPOINT_SECRET);
-    } catch (err) {
-        console.log(err.message);
-        return response.status(400).send(`Webhook Error: ${err.message}`);
+        const session = await stripe.checkout.sessions.listLineItems(id);
+        res.send(session);
+    } catch (e) {
+        console.log(e);
+        res.status(400).send("Session ID not found.");
     }
-
-    if (event.type === "checkout.session.completed") {
-        const session = event.data.object;
-
-        fulfillOrder(session);
-    }
-  
-    response.status(200).end();
 });
+
+
+app.post('/webhook', express.raw({type: 'application/json'}), webhook);
 
 app.listen(8080);
