@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 
-const { SK } = require("./settings/shared.js");
+const { SK } = require("./shared.js");
 
 const pool = require("./connection.js");
 const { webhook } = require("./webhook.js");

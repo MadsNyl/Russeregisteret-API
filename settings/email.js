@@ -1,4 +1,4 @@
-const { SMTP_API_KEY } = require("./shared");
+const { SMTP_API_KEY } = require("../shared");
 const nodemailer = require("nodemailer");
 
 const transporterBody = {

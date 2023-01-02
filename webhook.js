@@ -1,8 +1,7 @@
 const { transporterBody, successBody } = require("./settings/email.js");
-const { ENDPOINT_SECRET, SK } = require("./settings/shared.js");
+const { ENDPOINT_SECRET, SK } = require("./shared.js");
 const nodemailer = require("nodemailer");
-const connection = require("./connection.js");
-const pool = connection.connection;
+const pool = require("./connection.js");
 const stripe = require("stripe")(SK);
 
 const webhook = (request, response) => {
@@ -57,7 +56,6 @@ const fulfillOrder = async (session) => {
             });
         }
     });
-
     promise.then(
         (value) => {
             if (finalValues.length === 0) {
@@ -74,7 +72,6 @@ const fulfillOrder = async (session) => {
 
         (error) => {
             console.log(error);
-            res.status(500).send("Failed to register.");
         }
     );
 }
