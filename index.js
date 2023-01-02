@@ -4,10 +4,9 @@ const path = require("path");
 
 const { SK } = require("./settings/shared.js");
 
-const connection = require("./connection.js");
+const pool = require("./connection.js");
 const { webhook } = require("./webhook.js");
 const { contactEmail } = require("./settings/email.js");
-const pool = connection.connection;
 const stripe = require("stripe")(SK);
 
 const app = express();

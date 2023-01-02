@@ -1,7 +1,7 @@
 const mysql = require("mysql2");
-const { DB_USER, DB_PASSWORD, DB_HOST, DB } = require("./settings/shared.js");
+const { DB_USER, DB_PASSWORD, DB_HOST, DB } = require("./shared.js");
 
-const connection = mysql.createPool({
+const pool = mysql.createPool({
     host: DB_HOST,
     user: DB_USER,
     database: DB,
@@ -12,4 +12,4 @@ const connection = mysql.createPool({
 });
 
 
-exports.connection = connection;
+module.exports = pool;
